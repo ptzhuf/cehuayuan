@@ -13,11 +13,43 @@
 <head>
 <title>Home</title>
 <base href="<%=basePath%>">
+<link href="resources/css/bootstrap-tour-standalone.min.css"
+	rel="stylesheet">
+<script src="resources/jquery/jquery-1.9.0.js"></script>
+<script src="resources/js/bootstrap-tour-standalone.min.js"></script>
+<script type="text/javascript">
+	//Instance the tour
+	var tour = new Tour({
+		steps : [ {
+			element : "#demo",
+			title : "Title of my step",
+			placement : "right",
+			container : "body",
+			content : "Content of my step"
+		}, {
+			element : "#demo2",
+			title : "Title of my step",
+			placement : "left",
+			container : "body",
+			content : "Content of my step"
+		} ]
+	});
+
+	// Initialize the tour
+	tour.init();
+
+	// Start the tour
+	tour.start();
+</script>
 </head>
 <body>
+	<div id="demo">123</div>
+	<div id="demo2">321</div>
 	<h1>Hello world!</h1>
 	<img alt="" src="resources/image/zhuru.bmp" />
-	<!--  --><script src="resources/image/zhuru.bmp">
+	<!--  -->
+	<script src="resources/image/zhuru.bmp">
+		
 	</script>
 	<P>The time on the server is ${serverTime}.</P>
 	<table style="margin: 50px;">

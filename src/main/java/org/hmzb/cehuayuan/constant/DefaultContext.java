@@ -36,6 +36,12 @@ public final class DefaultContext {
 			+ "/whatEvents.aspx/T-";
 
 	/**
+	 * 活动id在url中的string indexOf 起始位置，就是 CEHUAYUAN_HOST + HUODONG_URL_PRE
+	 * 的length.主要用于 substring 取 真实的活动id号.
+	 */
+	public static final Integer HUODONG_ID_INDEX = 36;
+
+	/**
 	 * 默认的活动初始url.
 	 */
 	public static final String URL = HUODONG_URL_PRE + "153";

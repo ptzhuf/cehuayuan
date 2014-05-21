@@ -7,7 +7,10 @@ package org.hmzb.cehuayuan.service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -119,9 +122,9 @@ public class HuodongService {
 	 *             IOException
 	 * @author zhufu 2013 2013-5-9 下午5:20:58 动作:新建
 	 */
-	public HuodongDTO autoDiscover(String huodongListUrl, String cookie)
+	public List<HuodongDTO> autoDiscover(String huodongListUrl, String cookie)
 			throws IOException {
-		HuodongDTO huodongDTO = null;
+		List<HuodongDTO> huodongDTOList = new ArrayList<HuodongDTO>();
 		if (StringUtil.isBlank(huodongListUrl)) {
 			huodongListUrl = DefaultContext.HUODONG_LIST_URL;
 		}
@@ -131,19 +134,57 @@ public class HuodongService {
 		Document html = Jsoup.connect(huodongListUrl).header("cookie", cookie)
 				.get();
 		Elements aElements = html.select("a");
+		TreeSet<Integer> huodongIdSet = new TreeSet<Integer>();
 		for (Element a : aElements) {
 			String url = a.attr("href");
 			// 如果包含活动前缀则测试活动是否开放，直到有未开放的活动
 			if (url.contains(DefaultContext.HUODONG_URL_PRE)) {
-				huodongDTO = discover(url, cookie, false);
+				// 记录url中的活动编号
+				Integer huodongId = getHuodongIdFromHuodongURL(url);
+				huodongIdSet.add(huodongId);
+				// 探索活动
+				HuodongDTO huodongDTO = discover(url, cookie, false);
 				Integer status = huodongDTO.getCurrentStatus();
 				if (status.equals(HuodongConstant.UNOPENED)) { // 活动未开放，则探索结束
-					break;
+					huodongDTOList.add(huodongDTO);
 				}
 			}
 		}
+		// 如果活动列表中是空的，说明没有开放的活动，这个时候就去探索还未创建的活动
+		if (huodongDTOList.size() == 0) {
+			// 获取上个方法中查到的活动id最大值
+			Integer maxHuodongId = huodongIdSet.last();
+			do {
+				// 活动下一个活动的地址
+				String url = new StringBuilder()
+						.append(DefaultContext.HUODONG_URL_PRE)
+						.append(++maxHuodongId).toString();
+				// 探索下一个活动
+				HuodongDTO huodongDTO = discover(url, cookie, false);
+				// 如果下一个活动未创建，那么它极有可能成为健身的下一个活动，故将其加入结果集中
+				if (huodongDTO.getCurrentStatus().equals(
+						HuodongConstant.UNCREATE)) {
+					huodongDTOList.add(huodongDTO);
+				}
+			} while (huodongDTOList.size() < 2);
+		}
 		// 返回探索到的url
-		return huodongDTO;
+		return huodongDTOList;
+	}
+
+	/**
+	 * 通过活动的url获取活动的id.
+	 * 
+	 * @param url
+	 *            活动url
+	 * @return 活动id编号
+	 * @author ♨zhufu
+	 * @version 2014年5月19日 下午2:50:52
+	 */
+	private Integer getHuodongIdFromHuodongURL(String url) {
+		Integer huodongId = Integer.valueOf(url
+				.substring(DefaultContext.HUODONG_ID_INDEX));
+		return huodongId;
 	}
 
 	/**
@@ -312,6 +353,33 @@ public class HuodongService {
 	 */
 	public String getHuodongId(String huodongUrl) {
 		return huodongUrl.substring(huodongUrl.indexOf('-') + 1);
+	}
+
+	/**
+	 * 探索所有的url.
+	 * 
+	 * @param urlList
+	 *            url列表
+	 * @param cookie
+	 *            cookie
+	 * @param isAutoSignUp
+	 *            是否自动报名
+	 * @return huodong列表
+	 * @author ♨zhufu
+	 * @version 2014年5月20日 下午5:10:17
+	 * @throws IOException
+	 * @throws UnsupportedEncodingException
+	 * @throws ClientProtocolException
+	 */
+	public List<HuodongDTO> discoverAll(List<String> urlList, String cookie,
+			Boolean isAutoSignUp) throws ClientProtocolException,
+			UnsupportedEncodingException, IOException {
+		List<HuodongDTO> huodongDTOList = new ArrayList<HuodongDTO>();
+		for (String url : urlList) {
+			HuodongDTO huodongDTO = discover(url, cookie, isAutoSignUp);
+			huodongDTOList.add(huodongDTO);
+		}
+		return huodongDTOList;
 	}
 
 }

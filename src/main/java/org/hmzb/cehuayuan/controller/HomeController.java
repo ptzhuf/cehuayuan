@@ -78,4 +78,9 @@ public class HomeController {
 		return escape;
 	}
 
+	@RequestMapping("/tour")
+	public String tourTest() {
+		return "/tour/test";
+	}
+
 }

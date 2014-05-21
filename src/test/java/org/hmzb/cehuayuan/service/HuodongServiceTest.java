@@ -6,8 +6,6 @@ package org.hmzb.cehuayuan.service;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hmzb.cehuayuan.constant.DefaultContext;
 import org.hmzb.cehuayuan.dto.SignUpForm;
 import org.hmzb.http.HmzbResponse;
@@ -57,7 +55,7 @@ public class HuodongServiceTest {
 
 	@Test
 	public void testAutoDiscover() throws IOException {
-		String url = huodongService.autoDiscover(null, null).getUrl();
+		String url = huodongService.autoDiscover(null, null).get(0).getUrl();
 		logger.info("探索到的Url为 : {}", url);
 	}
 

@@ -27,30 +27,35 @@
 	src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
 <link href="resources/jquery/jquery-ui-1.10.0.custom.css"
 	rel="stylesheet" type="text/css" />
+<link href="resources/css/bootstrap-tour.css" rel="stylesheet" />
+<script src="resources/js/bootstrap-tour.js"></script>
 <style type="text/css">
 /*#content td {
 	border : 1px;
 	border-style: solid;
 }*/
+.my-tour-title {
+	font-family: 微软雅黑;
+	font-size: 16px;
+}
 </style>
 <!-- <script type="text/javascript" src="resources/jquery/jquery-1.9.0.js"></script> -->
 <script type="text/javascript"
 	src="resources/jquery/jquery-ui-1.10.0.js"></script>
 <script type="text/javascript" src="resources/js/huodong.js"></script>
-<script type="text/javascript">
-	
-</script>
 </head>
 <body
 	style="font-family: 造字工房版黑 G0v1 常规体, 造字工房丁丁手绘 G1v1 常规体, 微软雅黑; font-size: 26px; margin-left: 150px; margin-top: 50px; margin-right: 150px;">
-	<meta http-equiv=Set-Cookie
-		content="ASP.NET_SessionId=1234; expires=86400000; path=/">
+	<!-- <meta http-equiv=Set-Cookie
+		content="ASP.NET_SessionId=1234; expires=86400000; path=/"> -->
+	<div id="my-element"></div>
+	<div id="my-other-element"></div>
 	<div align="center" style="margin-bottom: 50px;">
 		<div>
-			<span class="text-success">Come on~~ It's RELEASE 1.0.
+			<span class="text-success">Come on~~ It's RELEASE 1.1.
 				提供建议请到讨论组- -.</span><br /> <br /> <span>
 		</div>
-		<div>
+		<div id="list-group-div">
 			<ul class="list-group" style="text-align: left">
 				<span class="alert alert-warning list-group-item">使用方法(因为暂时没办法让弹窗弹到最前，所以用邮件提示，自动跳转到页面，
 					<strong style="color: red;">如果开启自动报名将不再弹邮件</strong>)：
@@ -77,7 +82,7 @@
 					<td>Cookie</td>
 					<td><textarea rows="15" cols="120" name="cookie"
 							id="cookieTextarea" class="form-control"></textarea></td>
-					<td><p class="text-danger">
+					<td id="cookieDetailTd"><p class="text-danger">
 							cookie必须是单行的，可以通过firefox访问策花园，打开firebug，点击网络打开任意一个请求，查看请求头信息，原始头信息，拷贝其中的cookie值（如下图）到左框中<br />
 							<img alt="拷贝步骤" src="resources/image/step.jpg"
 								class="img-rounded" />
@@ -86,8 +91,15 @@
 				</tr>
 				<tr>
 					<td>活动url:</td>
-					<td><input type="text" id="urlInput" name="url" size="40"
-						maxlength="100" value="" class="form-control" /></td>
+					<td><input type="text" id="urlInput1" name="urlList[0]"
+						size="40" maxlength="100" value="" class="form-control" /><span><button
+								class="btn btn-default">
+								当前状态：<a id="currentStatusA1" href="" target="_blank">未探索</a>
+							</button></span><input type="text" id="urlInput2" name="urlList[1]" size="40"
+						maxlength="100" value="" class="form-control" /><span><button
+								class="btn btn-default">
+								当前状态：<a id="currentStatusA2" href="" target="_blank">未探索</a>
+							</button></span></td>
 					<td><a name="queryActBtnA" id="queryActBtnA"></a><input
 						type="button" id="submitBtn" value="启动查询活动"
 						class="btn btn-default" /><input type="button" id="clearTimerBtn"
@@ -187,5 +199,104 @@
 		</strong>
 	</div>
 
+	<script type="text/javascript">
+		// Instance the tour
+		var stepCookieVal = getCookie("tour" + version);
+		var isPrev = false;
+		var tour = new Tour(
+				{
+					debug : true,
+					template : "<div class='popover'> <div class='arrow'></div> <h3 class='popover-title my-tour-title'></h3> <div class='popover-content'></div> <div class='popover-navigation'> <div class='btn-group'> <button class='btn btn-sm btn-default' data-role='prev'>&laquo; 上一步</button> <button class='btn btn-sm btn-default' data-role='next'>下一步 &raquo;</button> <button class='btn btn-sm btn-default' data-role='pause-resume' data-pause-text='Pause' data-resume-text='Resume'>Pause</button> </div> <button class='btn btn-sm btn-default' data-role='end'>结束向导</button> </div> </div>",
+					steps : [
+							{
+								element : "#list-group-div",
+								animation : true,
+								title : "活动报名引导",
+								placement : "bottom",
+								backdrop : true,
+								content : "欢迎首次访问改版后的活动报名系统中，下面进入新功能指导！"
+							},
+							{
+								element : "#cookieDetailTd",
+								animation : true,
+								title : "活动报名引导",
+								placement : "top",
+								backdrop : true,
+								content : "这是我们的第一步，你需要填写一个你在策花园中的cookie，<span class='text text-danger'>请仔细阅读！</span>"
+							},
+							{
+								element : "#cookieTextarea",
+								animation : true,
+								title : "活动报名引导",
+								placement : "top",
+								backdrop : true,
+								content : "请按照上一步的说明拷贝你的cookie到文本框中吧，<span class='text text-danger'>如果你之前已经拷贝过了，我们会读取默认的cookie不用再次拷贝了哦</span>"
+							},
+							{
+								element : "#autoDiscoverBtn",
+								animation : true,
+								backdrop : true,
+								title : "活动报名引导",
+								placement : "top",
+								content : "点击这里可以自动探索健身活动，如果你还需要探索其他的活动，请在左侧手动输入活动的列表页地址！"
+							}, {
+								element : "#urlInput1",
+								animation : true,
+								backdrop : true,
+								title : "活动报名引导",
+								placement : "top",
+								content : "这里就是我们探索到的第一个活动地址！"
+							}, {
+								element : "#urlInput2",
+								animation : true,
+								backdrop : true,
+								title : "活动报名引导",
+								placement : "bottom",
+								content : "这里就是我们探索到的第二个活动地址！"
+							}, {
+								element : "#isAutoSignUpCheckbox",
+								animation : true,
+								backdrop : true,
+								title : "活动报名引导",
+								placement : "top",
+								content : "勾选上这个后，就可以在查询活动时，自动报名已经开放的活动！"
+							}, {
+								element : "#submitBtn",
+								animation : true,
+								backdrop : true,
+								title : "活动报名引导",
+								placement : "top",
+								content : "进入到这里就是我们的最后一步了，痛快的点击它吧~！"
+							} ],
+					onStart : function(tour) {
+						if (stepCookieVal == tour._options.steps.length) {
+							tour.end();
+						} else {
+						}
+					},
+					onPrev : function(tour) {
+						isPrev = true
+					},
+					onNext : function(tour) {
+						isPrev = false;
+					},
+					onShown : function(tour) {
+						var stepIndex = tour.getCurrentStep();
+						if (stepCookieVal > tour.getCurrentStep()
+								&& isPrev == false) {
+							tour.goTo(new Number(stepCookieVal));
+						} else {
+							setCookie("tour" + version, stepIndex);
+						}
+					},
+					onEnd : function(tour) {
+						setCookie("tour" + version, tour._options.steps.length);
+					}
+				});
+		// Initialize the tour
+		tour.init();
+		// Start the tour
+		tour.restart();
+	</script>
 </body>
 </html>

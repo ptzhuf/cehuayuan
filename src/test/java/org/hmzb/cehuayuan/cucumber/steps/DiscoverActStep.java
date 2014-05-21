@@ -1,5 +1,6 @@
 package org.hmzb.cehuayuan.cucumber.steps;
 
+import org.hamcrest.Matchers;
 import org.hmzb.cehuayuan.springmvc.test.AbstractSpringMvcTest;
 import org.mockito.internal.matchers.NotNull;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -49,7 +51,8 @@ public class DiscoverActStep extends AbstractSpringMvcTest {
 	@那么("^应该探测出未开放或者未创建的两个活动地址$")
 	public void 应该探测出未开放或者未创建的两个活动地址() throws Throwable {
 		ra.andDo(MockMvcResultHandlers.print());
-		ra.andExpect(MockMvcResultMatchers.jsonPath("$.url", NotNull.NOT_NULL));
+//		ra.andExpect(MockMvcResultMatchers.jsonPath("$.url", NotNull.NOT_NULL));
+		ra.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
 	}
 
 }

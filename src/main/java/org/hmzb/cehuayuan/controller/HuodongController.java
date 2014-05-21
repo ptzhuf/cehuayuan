@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.hmzb.cehuayuan.constant.DefaultContext;
+import org.hmzb.cehuayuan.dto.DiscoverFormDTO;
 import org.hmzb.cehuayuan.dto.HuodongDTO;
 import org.hmzb.cehuayuan.dto.SignUpForm;
 import org.hmzb.cehuayuan.service.HuodongService;
@@ -73,18 +74,21 @@ public class HuodongController {
 	 */
 	@RequestMapping(value = "/discover")
 	public @ResponseBody
-	HuodongDTO discover(String url, String cookie, Boolean isAutoSignUp,
-			HttpServletRequest request) throws ClientProtocolException,
-			UnsupportedEncodingException, IOException {
+	List<HuodongDTO> discover(DiscoverFormDTO discoverForm, HttpServletRequest request)
+			throws ClientProtocolException, UnsupportedEncodingException,
+			IOException {
+		List<String> urlList = discoverForm.getUrlList();
+		String cookie = discoverForm.getCookie();
+		Boolean isAutoSignUp = discoverForm.getIsAutoSignUp();
 		// 如果cookie参数为空，则从request中 获取cookie
 		if (StringUtils.isBlank(cookie)) {
 			cookie = getCookie(request);
 		}
 		logger.info("访客IP：{} , 访客cookie: {} , 访问URL: {}", new Object[] {
-				HttpServletUtil.getIpAddr(request), cookie, url });
-		HuodongDTO huodongDTO = huodongService.discover(url, cookie,
+				HttpServletUtil.getIpAddr(request), cookie, urlList });
+		List<HuodongDTO> huodongDTOList = huodongService.discoverAll(urlList, cookie,
 				isAutoSignUp);
-		return huodongDTO;
+		return huodongDTOList;
 	}
 
 	/**
@@ -101,11 +105,11 @@ public class HuodongController {
 	 */
 	@RequestMapping(value = "/autoDiscover")
 	public @ResponseBody
-	HuodongDTO autoDiscover(String huodongListUrl, String cookie)
+	List<HuodongDTO> autoDiscover(String huodongListUrl, String cookie)
 			throws IOException {
-		HuodongDTO huodongDTO = huodongService.autoDiscover(huodongListUrl,
-				cookie);
-		return huodongDTO;
+		List<HuodongDTO> huodongDTOList = huodongService.autoDiscover(
+				huodongListUrl, cookie);
+		return huodongDTOList;
 	}
 
 	/**

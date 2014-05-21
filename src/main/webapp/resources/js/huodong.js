@@ -8,6 +8,10 @@ var AUTO_SIGN_UP = "huodong/autoSignUp";
  * 定时器名称.
  */
 var timerName;
+/**
+ * 版本号.
+ */
+var version = 1.1;
 var HUODONG_STATUS = {
 	OPENED : 1,
 	UNOPENED : 2,
@@ -27,6 +31,7 @@ var init = function() {
 			.floor(Math.random() * Math.pow(10, randomWidth) + 1); // 1-10
 	$("#emailText").val(randomNumber + "@" + randomNumber + ".com");
 	$("#bodyText").val(randomNumber);
+	initTour();
 	// $("#testBtn").click(test);
 	// topicId = $("#topicId").val();
 };
@@ -88,9 +93,12 @@ var autoDiscover = function() {
 			cookie : $("#cookieTextarea").val()
 		},
 		success : function(data) {
-			$("#urlInput").val(data.url);
-			$("#currentStatusA").html("活动还未开放");
-			$("#currentStatusA").prop("href", data.url);
+			$("#urlInput1").val(data[0].url);
+			$("#currentStatusA1").html("活动还未开放");
+			$("#currentStatusA1").prop("href", data[0].url);
+			$("#urlInput2").val(data[1].url);
+			$("#currentStatusA2").html("活动还未开放");
+			$("#currentStatusA2").prop("href", data[1].url);
 			alert("探索完成,请点击开启查询");
 		}
 	});
@@ -105,43 +113,49 @@ var submitQuery = function() {
 		url : HUODONG_DISCOVER_URL,
 		data : $("#queryForm").serializeArray(),
 		success : function(data) {
-			$("#urlInput").val(data.url);
-			switch (data.currentStatus) {
-			case HUODONG_STATUS.OPENED:
-				$("#currentStatusA").html("活动已经开放请及时进入活动页面");
-				$("#currentStatusA").prop("href", data.url);
-				// alert("活动已经开放请及时登录活动页面<a href=\"" + data.url
-				// + "\" target=\"_blank\">点击前往</a>");
-				closeDiscover();
-				if ($("#isAutoSignUpCheckbox").prop("checked")) {
-					autoSignUp();
-				} else {
-					location.href = $("#mailA").prop("href");
-					location.href = data.url;
+			$(data).each(function(index, element) {
+				var idIndex = index + 1;
+				var urlInputId = "#urlInput" + idIndex;
+				var currentStatusId = "#currentStatusA" + idIndex;
+				$(urlInputId).val(element.url);
+				switch (element.currentStatus) {
+				case HUODONG_STATUS.OPENED:
+					$(currentStatusId).html("活动已经开放请及时进入活动页面");
+					$(currentStatusId).prop("href", element.url);
+					// alert("活动已经开放请及时登录活动页面<a href=\"" + element.url
+					// + "\" target=\"_blank\">点击前往</a>");
+					closeDiscover();
+					if ($("#isAutoSignUpCheckbox").prop("checked")) {
+						autoSignUp(idIndex);
+					} else {
+						location.href = $("#mailA").prop("href");
+						location.href = element.url;
+					}
+					break;
+				case HUODONG_STATUS.UNOPENED:
+					$(currentStatusId).html("活动还未开放");
+					$(currentStatusId).prop("href", element.url);
+					break;
+				case HUODONG_STATUS.UNCREATE:
+					$(currentStatusId).html("活动还未创建");
+					$(currentStatusId).prop("href", element.url);
+					break;
 				}
-				break;
-			case HUODONG_STATUS.UNOPENED:
-				$("#currentStatusA").html("活动还未开放");
-				$("#currentStatusA").prop("href", data.url);
-				break;
-			case HUODONG_STATUS.UNCREATE:
-				$("#currentStatusA").html("活动还未创建");
-				$("#currentStatusA").prop("href", data.url);
-				break;
-			}
+			});
 		}
 	});
 };
 /**
  * 自动报名.
  */
-var autoSignUp = function() {
+var autoSignUp = function(idIndex) {
+	var urlInput = $("#urlInput1") + 1;
 	// 查询参数
 	var params = $("#autoSignUpForm").serializeArray();
-	var name = $("#urlInput").prop('name');
-	var value = $("#urlInput").val();
+	var name = $(urlInput).prop('name');
+	var value = $(urlInput).val();
 	params.push({
-		"name" : name,
+		"name" : "url",
 		"value" : value
 	});
 	var name = $("#cookieTextarea").prop('name');
@@ -161,6 +175,12 @@ var autoSignUp = function() {
 	});
 };
 /**
+ * 初始化tour.
+ */
+var initTour = function() {
+
+}
+/**
  * 打开回复对话框.
  * 
  * @param {String}
@@ -175,4 +195,24 @@ var openReplyDIV = function(commentId) {
 		}
 	});
 	$("#replyCommentId").val(commentId);
+};
+/**
+ * 取cookies函数.
+ */
+var getCookie = function(name) {
+	var arr = document.cookie
+			.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+	if (arr != null)
+		return unescape(arr[2]);
+	return null;
+};
+/**
+ * 设置cookies函数.
+ */
+var setCookie = function(name, value) {// 两个参数，一个是cookie的名子，一个是值
+	var Days = 30; // 此 cookie 将被保存 30 天
+	var exp = new Date(); // new Date("December 31, 9998");
+	exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+	document.cookie = name + "=" + escape(value) + ";expires="
+			+ exp.toGMTString();
 };
