@@ -130,14 +130,6 @@
 						<strong style="color: red;">不知道的事将在下一版本公布。。。。</strong>
 					</p> -->
 
-	<table
-		style="border: 10px; border-style: solid; border-color: green; margin-top: 10px;">
-		<tr>
-			<td style="text-align: center; font-size: 20px;">当前状态：<a
-				id="currentStatusA" href="" target="_blank">未探索</a></td>
-		</tr>
-	</table>
-
 	<!-- <table>
 		<form id="autoSignUpForm">
 			<tr>
@@ -186,10 +178,6 @@
 			<!-- 邮件参数里 cc是抄送，bcc是密件抄送，subject是主题，body是内容 -->
 		</tr>
 	</table>
-
-	<div style="margin-top: 30px;">
-		<strong style="color: red;">版本号： 1399604044195</strong>
-	</div>
 
 	<div style="margin-top: 30px;">
 		<strong style="color: red;">我怎么可能告诉你，活动不用开放也可以报名的呢。<img
