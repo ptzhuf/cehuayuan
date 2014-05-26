@@ -232,7 +232,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>cehuayuan.war</finalName>
+		<finalName>cehuayuan</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
