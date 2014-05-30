@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
@@ -20,6 +21,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hmzb.cehuayuan.constant.DefaultContext;
@@ -86,6 +88,10 @@ public class HuodongService {
 		}
 		HuodongDTO huodongDTO = new HuodongDTO();
 		HttpClient client = new DefaultHttpClient();
+		client.getParams().setIntParameter(
+				CoreConnectionPNames.CONNECTION_TIMEOUT, 20000);
+		client.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT,
+				20000);
 		HttpUriRequest request = new HttpGet(url);
 		request.addHeader("Cookie", cookie);
 		// HttpResponse response = client.execute(request);
@@ -118,58 +124,69 @@ public class HuodongService {
 	 * @param cookie
 	 *            cookie
 	 * @return 带有活动地址的dto
-	 * @throws IOException
-	 *             IOException
 	 * @author zhufu 2013 2013-5-9 下午5:20:58 动作:新建
+	 * @throws Exception
 	 */
 	public List<HuodongDTO> autoDiscover(String huodongListUrl, String cookie)
-			throws IOException {
-		List<HuodongDTO> huodongDTOList = new ArrayList<HuodongDTO>();
-		if (StringUtil.isBlank(huodongListUrl)) {
-			huodongListUrl = DefaultContext.HUODONG_LIST_URL;
-		}
-		if (StringUtil.isBlank(cookie)) {
-			cookie = DefaultContext.COOKIE;
-		}
-		Document html = Jsoup.connect(huodongListUrl).header("cookie", cookie)
-				.get();
-		Elements aElements = html.select("a");
-		TreeSet<Integer> huodongIdSet = new TreeSet<Integer>();
-		for (Element a : aElements) {
-			String url = a.attr("href");
-			// 如果包含活动前缀则测试活动是否开放，直到有未开放的活动
-			if (url.contains(DefaultContext.HUODONG_URL_PRE)) {
-				// 记录url中的活动编号
-				Integer huodongId = getHuodongIdFromHuodongURL(url);
-				huodongIdSet.add(huodongId);
-				// 探索活动
-				HuodongDTO huodongDTO = discover(url, cookie, false);
-				Integer status = huodongDTO.getCurrentStatus();
-				if (status.equals(HuodongConstant.UNOPENED)) { // 活动未开放，则探索结束
-					huodongDTOList.add(huodongDTO);
+			throws Exception {
+
+		try {
+			List<HuodongDTO> huodongDTOList = new ArrayList<HuodongDTO>();
+			if (StringUtil.isBlank(huodongListUrl)) {
+				huodongListUrl = DefaultContext.HUODONG_LIST_URL;
+			}
+			if (StringUtil.isBlank(cookie)) {
+				cookie = DefaultContext.COOKIE;
+			}
+			// 查找近期活动列表
+			Document html = Jsoup.connect(huodongListUrl)
+					.header("cookie", cookie).get();
+			Elements aElements = html.select("a");
+			TreeSet<Integer> huodongIdSet = new TreeSet<Integer>();
+			for (Element a : aElements) {
+				String url = a.attr("href");
+				// 如果包含活动前缀则测试活动是否开放，直到有未开放的活动
+				if (url.contains(DefaultContext.HUODONG_URL_CONTAIN)) {
+					// 记录url中的活动编号
+					Integer huodongId = getHuodongIdFromHuodongURL(url);
+					huodongIdSet.add(huodongId);
+					// 探索活动
+					HuodongDTO huodongDTO = discover(url, cookie, false);
+					Integer status = huodongDTO.getCurrentStatus();
+					if (status.equals(HuodongConstant.UNOPENED)) { // 活动未开放，则探索结束
+						huodongDTOList.add(huodongDTO);
+					}
 				}
 			}
+			// 近期活动页面完全没有活动，说明活动可能被删除了
+			// 如果活动列表中是空的，说明没有开放的活动，这个时候就去探索还未创建的活动
+			if (huodongDTOList.size() == 0) {
+				// 获取上个方法中查到的活动id最大值
+				Integer maxHuodongId = huodongIdSet.last();
+				do {
+					// 活动下一个活动的地址
+					String url = new StringBuilder()
+							.append(DefaultContext.HUODONG_URL_PRE)
+							.append(++maxHuodongId).toString();
+					// 探索下一个活动
+					HuodongDTO huodongDTO = discover(url, cookie, false);
+					// 如果下一个活动未创建，那么它极有可能成为健身的下一个活动，故将其加入结果集中
+					if (huodongDTO.getCurrentStatus().equals(
+							HuodongConstant.UNCREATE)) {
+						huodongDTOList.add(huodongDTO);
+					}
+				} while (huodongDTOList.size() < 2);
+			}
+			// 返回探索到的url
+			return huodongDTOList;
+		} catch (Exception e) {
+			String msg = "autoDiscover 出错";
+			logger.error(new StringBuilder().append(msg).append(", 请求参数为: {}")
+					.toString(), Arrays.deepToString(new Object[] {
+					huodongListUrl, cookie }));
+			logger.error(msg, e);
+			throw e;
 		}
-		// 如果活动列表中是空的，说明没有开放的活动，这个时候就去探索还未创建的活动
-		if (huodongDTOList.size() == 0) {
-			// 获取上个方法中查到的活动id最大值
-			Integer maxHuodongId = huodongIdSet.last();
-			do {
-				// 活动下一个活动的地址
-				String url = new StringBuilder()
-						.append(DefaultContext.HUODONG_URL_PRE)
-						.append(++maxHuodongId).toString();
-				// 探索下一个活动
-				HuodongDTO huodongDTO = discover(url, cookie, false);
-				// 如果下一个活动未创建，那么它极有可能成为健身的下一个活动，故将其加入结果集中
-				if (huodongDTO.getCurrentStatus().equals(
-						HuodongConstant.UNCREATE)) {
-					huodongDTOList.add(huodongDTO);
-				}
-			} while (huodongDTOList.size() < 2);
-		}
-		// 返回探索到的url
-		return huodongDTOList;
 	}
 
 	/**

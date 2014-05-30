@@ -30,10 +30,15 @@ public final class DefaultContext {
 	public static final String CEHUAYUAN_HOST = "http://10.5.17.74";
 
 	/**
+	 * 活动的url关键部分.
+	 */
+	public static final String HUODONG_URL_CONTAIN = "/whatEvents.aspx/T-";
+	
+	/**
 	 * 活动url前缀.
 	 */
 	public static final String HUODONG_URL_PRE = CEHUAYUAN_HOST
-			+ "/whatEvents.aspx/T-";
+			+ HUODONG_URL_CONTAIN;
 
 	/**
 	 * 活动id在url中的string indexOf 起始位置，就是 CEHUAYUAN_HOST + HUODONG_URL_PRE

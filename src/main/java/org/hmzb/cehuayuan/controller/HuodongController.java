@@ -99,14 +99,13 @@ public class HuodongController {
 	 * @param cookie
 	 *            cookie
 	 * @return 包含即将开放的活动url的huodongDTO
-	 * @throws IOException
-	 *             IOException
 	 * @author zhufu 2013 2013-5-10 上午10:32:40 动作:新建
+	 * @throws Exception e
 	 */
 	@RequestMapping(value = "/autoDiscover")
 	public @ResponseBody
 	List<HuodongDTO> autoDiscover(String huodongListUrl, String cookie)
-			throws IOException {
+			throws Exception {
 		List<HuodongDTO> huodongDTOList = huodongService.autoDiscover(
 				huodongListUrl, cookie);
 		return huodongDTOList;

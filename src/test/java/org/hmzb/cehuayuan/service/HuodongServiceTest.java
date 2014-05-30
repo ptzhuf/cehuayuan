@@ -54,7 +54,7 @@ public class HuodongServiceTest {
 	}
 
 	@Test
-	public void testAutoDiscover() throws IOException {
+	public void testAutoDiscover() throws Exception {
 		String url = huodongService.autoDiscover(null, null).get(0).getUrl();
 		logger.info("探索到的Url为 : {}", url);
 	}
