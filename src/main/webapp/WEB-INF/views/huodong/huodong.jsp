@@ -92,11 +92,14 @@
 				<tr>
 					<td>活动url:</td>
 					<td><input type="text" id="urlInput1" name="urlList[0]"
-						size="40" maxlength="100" value="" class="form-control" /><span><button
+						size="40" maxlength="100" value="" class="form-control"
+						data-toggle="popover" data-container="body" data-placement="top" /><span><button
 								class="btn btn-default">
 								当前状态：<a id="currentStatusA1" href="" target="_blank">未探索</a>
 							</button></span><input type="text" id="urlInput2" name="urlList[1]" size="40"
-						maxlength="100" value="" class="form-control" /><span><button
+						maxlength="100" value="" class="form-control"
+						data-toggle="popover" data-container="body"
+						data-placement="bottom" /><span><button
 								class="btn btn-default">
 								当前状态：<a id="currentStatusA2" href="" target="_blank">未探索</a>
 							</button></span></td>

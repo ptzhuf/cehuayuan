@@ -85,6 +85,8 @@ public class HuodongService {
 		}
 		if (StringUtils.isBlank(url)) {
 			url = DefaultContext.URL;
+		} else if (!url.contains("http")) { // 如果url里没有包含http，那么可能是只有活动的请求地址，没有包含host信息
+			url = DefaultContext.CEHUAYUAN_HOST + url;
 		}
 		HuodongDTO huodongDTO = new HuodongDTO();
 		HttpClient client = new DefaultHttpClient();

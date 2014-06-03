@@ -7,6 +7,7 @@ package org.hmzb.cehuayuan.service;
 import java.io.IOException;
 
 import org.hmzb.cehuayuan.constant.DefaultContext;
+import org.hmzb.cehuayuan.dto.HuodongDTO;
 import org.hmzb.cehuayuan.dto.SignUpForm;
 import org.hmzb.http.HmzbResponse;
 import org.junit.Test;
@@ -65,6 +66,15 @@ public class HuodongServiceTest {
 		HmzbResponse response = huodongService.autoSignUp(huodongUrl, "", suf,
 				"10.5.15.185");
 		logger.info("返回结果：\n{}", response);
+	}
+
+	@Test
+	public final void testDisvocer() throws Exception {
+		Boolean isAutoSignUp = true;
+		String cookie = null;
+		String url = "http://10.5.17.74/whatEvents.aspx/T-414";
+		HuodongDTO result = huodongService.discover(url, cookie, isAutoSignUp);
+		logger.info("{}", result);
 	}
 
 	@Test

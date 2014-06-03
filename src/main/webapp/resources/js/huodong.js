@@ -113,6 +113,7 @@ var submitQuery = function() {
 		url : HUODONG_DISCOVER_URL,
 		data : $("#queryForm").serializeArray(),
 		success : function(data) {
+			var idIndexAcc = 0;
 			$(data).each(function(index, element) {
 				var idIndex = index + 1;
 				var urlInputId = "#urlInput" + idIndex;
@@ -124,7 +125,8 @@ var submitQuery = function() {
 					$(currentStatusId).prop("href", element.url);
 					// alert("活动已经开放请及时登录活动页面<a href=\"" + element.url
 					// + "\" target=\"_blank\">点击前往</a>");
-					closeDiscover();
+					// 根据index，做累加判断，判断是否需要关闭
+					idIndexAcc += 1;
 					if ($("#isAutoSignUpCheckbox").prop("checked")) {
 						autoSignUp(idIndex);
 					} else {
@@ -142,6 +144,10 @@ var submitQuery = function() {
 					break;
 				}
 			});
+			// 如果每个url都是开放的，就停止定时器，即acc与data大小相等
+			if (idIndexAcc == data.length) {
+				closeDiscover();
+			}
 		}
 	});
 };
@@ -149,11 +155,12 @@ var submitQuery = function() {
  * 自动报名.
  */
 var autoSignUp = function(idIndex) {
-	var urlInput = $("#urlInput1") + 1;
+	var urlInputId = "#urlInput" + idIndex;
 	// 查询参数
 	var params = $("#autoSignUpForm").serializeArray();
-	var name = $(urlInput).prop('name');
-	var value = $(urlInput).val();
+	var urlInput = $(urlInputId);
+	var name = urlInput.prop('name');
+	var value = urlInput.val();
 	params.push({
 		"name" : "url",
 		"value" : value
@@ -170,7 +177,17 @@ var autoSignUp = function(idIndex) {
 		url : AUTO_SIGN_UP,
 		data : params,
 		success : function(data) {
-			alert(data);
+			urlInput.popover({
+				content : data,
+				delay : {
+					show : 0,
+					hide : 500
+				}
+			});
+			urlInput.popover("show");
+			setTimeout(function() {
+				urlInput.popover("destroy")
+			}, 5000);
 		}
 	});
 };

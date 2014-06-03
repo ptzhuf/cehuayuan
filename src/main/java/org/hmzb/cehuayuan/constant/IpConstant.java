@@ -9,7 +9,7 @@ package org.hmzb.cehuayuan.constant;
  * 
  */
 public final class IpConstant {
-
+	// TODO IP地址已经全部更换过，需要找时间重新记录一次
 	/**
 	 * 李林迅IP地址.
 	 */
@@ -17,7 +17,7 @@ public final class IpConstant {
 	/**
 	 * 朱赋IP地址.
 	 */
-	public final static String ZHU_FU = "10.5.15.185";
+	public final static String ZHU_FU = "10.5.15.16";
 	/**
 	 * 杨宙IP地址.
 	 */
