@@ -14,6 +14,8 @@
 <meta http-equiv="pragma" content="no-cache" />
 <base href="<%=basePath%>">
 <title>活动自动探索-RELEASE 0.1</title>
+<!-- 图标 -->
+<link rel="shortcut icon" type="image/ico" href="resources/image/zt_128X128.ico" />
 <!-- 最新 Bootstrap 核心 CSS 文件 -->
 <link rel="stylesheet"
 	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
