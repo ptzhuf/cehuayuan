@@ -33,7 +33,7 @@ public final class DefaultContext {
 	 * 活动的url关键部分.
 	 */
 	public static final String HUODONG_URL_CONTAIN = "/whatEvents.aspx/T-";
-	
+
 	/**
 	 * 活动url前缀.
 	 */
@@ -41,7 +41,7 @@ public final class DefaultContext {
 			+ HUODONG_URL_CONTAIN;
 
 	/**
-	 * 活动id在url中的string indexOf 起始位置，就是 CEHUAYUAN_HOST + HUODONG_URL_PRE
+	 * 活动id在完整url中的string indexOf 起始位置，就是 CEHUAYUAN_HOST + HUODONG_URL_PRE
 	 * 的length.主要用于 substring 取 真实的活动id号.
 	 */
 	public static final Integer HUODONG_ID_INDEX = 36;
@@ -52,10 +52,15 @@ public final class DefaultContext {
 	public static final String URL = HUODONG_URL_PRE + "153";
 
 	/**
-	 * 健身活动列表url.
+	 * 近期健身活动列表url.
 	 */
 	public static final String HUODONG_LIST_URL = CEHUAYUAN_HOST
 			+ "/c/musle/whatEvents.aspx/Control_ListEvents?status=Published&_=1368077829203";
+	/**
+	 * 已经结束的健身活动列表第一页url.
+	 */
+	public static final String HUODONG_FINISH_LIST_URL = CEHUAYUAN_HOST
+			+ "/c/musle/whatEvents.aspx/Control_ListEvents?status=Finished&";
 
 	/**
 	 * 默认报名URL前缀.

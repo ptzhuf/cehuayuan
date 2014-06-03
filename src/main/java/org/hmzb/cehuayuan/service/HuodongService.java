@@ -158,7 +158,37 @@ public class HuodongService {
 					}
 				}
 			}
-			// 近期活动页面完全没有活动，说明活动可能被删除了
+
+			// 近期活动页面完全没有活动，说明活动可能被删除了,或者存在其他意外，这时可以考虑查询以往活动
+			if (huodongIdSet.isEmpty()) {
+				String historyHuodongListUrl = DefaultContext.HUODONG_FINISH_LIST_URL
+						+ "pageIndex=1";
+				html = Jsoup.connect(historyHuodongListUrl)
+						.header("cookie", cookie).get();
+				// 上面获取到了第一页，准备获取最后一个分页
+				aElements = html.select("div.paginator").select("a");
+				// 找到最后一页的页码
+				Element aElement = aElements.get(aElements.size() - 2);
+				Integer pageIndex = Integer.valueOf(aElement.text());
+				// 查询最后一页
+				html = Jsoup
+						.connect(
+								DefaultContext.HUODONG_FINISH_LIST_URL
+										+ "pageIndex=" + pageIndex)
+						.header("cookie", cookie).get();
+				aElements = html.select("a");
+				for (Element a : aElements) {
+					String url = a.attr("href");
+					// 如果包含活动前缀则测试活动是否开放，直到有未开放的活动 TODO
+					if (url.contains(DefaultContext.HUODONG_URL_CONTAIN)) {
+						// 记录url中的活动编号
+						Integer huodongId = getHuodongIdFromHuodongURL(url);
+						huodongIdSet.add(huodongId);
+						// 都是历史活动，不需要再去探索了~，直接把活动ID带走就可
+					}
+				}
+			}
+
 			// 如果活动列表中是空的，说明没有开放的活动，这个时候就去探索还未创建的活动
 			if (huodongDTOList.size() == 0) {
 				// 获取上个方法中查到的活动id最大值
@@ -199,8 +229,11 @@ public class HuodongService {
 	 * @version 2014年5月19日 下午2:50:52
 	 */
 	private Integer getHuodongIdFromHuodongURL(String url) {
-		Integer huodongId = Integer.valueOf(url
-				.substring(DefaultContext.HUODONG_ID_INDEX));
+		Integer subIndex = url.indexOf(DefaultContext.HUODONG_URL_CONTAIN)
+				+ DefaultContext.HUODONG_URL_CONTAIN.length();
+		// FIXME 暂时只取三位数字，也不知道健身能不能撑到破1千次活动呢，到时候再换正则匹配吧。。。
+		Integer huodongId = Integer.valueOf(url.substring(subIndex,
+				subIndex + 3));
 		return huodongId;
 	}
 
