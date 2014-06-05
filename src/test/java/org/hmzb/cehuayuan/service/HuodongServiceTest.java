@@ -6,10 +6,17 @@ package org.hmzb.cehuayuan.service;
 
 import java.io.IOException;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.hmzb.cehuayuan.constant.DefaultContext;
 import org.hmzb.cehuayuan.dto.HuodongDTO;
 import org.hmzb.cehuayuan.dto.SignUpForm;
 import org.hmzb.http.HmzbResponse;
+import org.hmzb.util.HttpClientUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -39,19 +46,19 @@ public class HuodongServiceTest {
 
 	@Test
 	public void testExit() throws IOException {
-		String html = huodongService.exitHuodong(null, null);
-		// HttpClient client = new DefaultHttpClient();
-		// // 拼凑注册URL,获得request
-		// HttpUriRequest request = new HttpPost(
-		// "http://10.5.17.74/whatEvents.aspx/ExitEvent");
-		// request.addHeader("cookie", DefaultContext.COOKIE);
-		// HttpParams params = new BasicHttpParams();
-		// params.setParameter("userID", "5313");
-		// params.setParameter("eventID", "262");
-		// request.setParams(params);
-		// HmzbResponse response = HttpClientUtil.getResult(client, request);
-		// System.out.println(response.getStatusCode());
-		// System.out.println(response.getHtml());
+//		String html = huodongService.exitHuodong(null, null);
+		 HttpClient client = new DefaultHttpClient();
+		 // 拼凑注册URL,获得request
+		 HttpUriRequest request = new HttpPost(
+		 "http://10.5.17.74/whatEvents.aspx/ExitEvent");
+		 request.addHeader("cookie", DefaultContext.COOKIE);
+		 HttpParams params = new BasicHttpParams();
+		 params.setParameter("userID", "5483");
+		 params.setParameter("eventID", "412");
+		 request.setParams(params);
+		 HmzbResponse response = HttpClientUtil.getResult(client, request);
+		 System.out.println(response.getStatusCode());
+		 System.out.println(response.getHtml());
 	}
 
 	@Test
