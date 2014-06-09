@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/weixin")
 public class WeiXinController {
 
-	/**
+	/** 
 	 * logger.
 	 */
 	private static final Logger LOGGER = LoggerFactory

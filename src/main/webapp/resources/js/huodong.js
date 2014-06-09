@@ -185,6 +185,17 @@ var autoSignUp = function(idIndex) {
 				}
 			});
 			urlInput.popover("show");
+			$("#zhouyeImg").popover({
+				content : data,
+				delay : {
+					show : 0,
+					hide : 500
+				}
+			});
+			$("#zhouyeImg").popover("show");
+			setTimeout(function() {
+				$("#zhouyeImg").popover("destroy")
+			}, 5000);
 			setTimeout(function() {
 				urlInput.popover("destroy")
 			}, 5000);

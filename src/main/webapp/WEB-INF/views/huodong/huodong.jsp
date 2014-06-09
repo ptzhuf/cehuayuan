@@ -15,7 +15,8 @@
 <base href="<%=basePath%>">
 <title>活动自动探索-RELEASE 0.1</title>
 <!-- 图标 -->
-<link rel="shortcut icon" type="image/ico" href="resources/image/zt_128X128.ico" />
+<link rel="shortcut icon" type="image/ico"
+	href="resources/image/zt_128X128.ico" />
 <!-- 最新 Bootstrap 核心 CSS 文件 -->
 <link rel="stylesheet"
 	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
@@ -190,6 +191,15 @@
 		</strong><br /> <strong style="color: red;">我怎么可能告诉你，活动报上名的人还可以踢掉呢。<img
 			alt="" src="resources/image/yun.gif">臣妾做不到啊~~~
 		</strong>
+	</div>
+
+	<div id="footer" class="navbar navbar-default navbar-fixed-bottom">
+		<div class="container">
+			<img id="zhouyeImg" src="resources/image/zt_128X128.ico"
+				alt="我是区域Boss宙爷" class="img-rounded" data-toggle="popover"
+				data-container="body" data-placement="top" />
+			<p class="text-muted">完全开源随意使用，被抓不要犯傻就行~.</p>
+		</div>
 	</div>
 
 	<script type="text/javascript">
