@@ -99,7 +99,17 @@ var autoDiscover = function() {
 			$("#urlInput2").val(data[1].url);
 			$("#currentStatusA2").html("活动还未开放");
 			$("#currentStatusA2").prop("href", data[1].url);
-			alert("探索完成,请点击开启查询");
+			$("#zhouyeImg").popover({
+				content : "探索完成,请点击开启查询",
+				delay : {
+					show : 0,
+					hide : 500
+				}
+			});
+			$("#zhouyeImg").popover("show");
+			setTimeout(function() {
+				$("#zhouyeImg").popover("destroy")
+			}, 5000);
 		}
 	});
 };
